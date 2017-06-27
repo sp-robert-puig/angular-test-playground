@@ -8,8 +8,8 @@ import { Component, OnInit } from '@angular/core';
 export class ExternalComponent implements OnInit {
   title = 'external component!'
   constructor() { }
-
+  //test
   ngOnInit() {
-  }
 
+  }
 }

@@ -1,14 +1,41 @@
+# Angular test
 
-# Angular test documentantion
+Test types
+* Isolated:
+  * No rendering
+  * Same as JS
+  * Mock all deps
+  * Isolated unit tests in pipes and services.
+  * Test drive your components and test complex logic
 
-Isolated unit tests in pipes and services.
+* Shallow:
+  * Isolated test plus (ng-for, ng-if...)
+  * Render template without childrens
+  * Test requires to render a component’s template
+  * mocked up every single dependency of a component
+  * schemas: [NO_ERRORS_SCHEMA]
+  * declarations: [CurrentComponent]
+
+* Integration
+  * Render Components
+  * Check correctness
+  * Only mock browser capabilities
+  * Verify that a group of components and services (e.g., the router) work together
+  * imports: [Modules]
+  * TestBed.get(Router);
+
+* Host
+  * Test a component inside a test host component
+  * 
+
 
 ## TestBed
-configureTestingModule // config ngModule declarations
 
-compileComponents();  // compile template and css
+> __configureTestingModule__ *config ngModule declarations*
 
-createComponent // create instance of component, return <ComponentFixture>
+> __compileComponents()__ *compile template and css*
+
+> __createComponent__ *Create instance of component, return <ComponentFixture>. Do not re-configure TestBed after calling createComponent.*
 
         debugElement: DebugElement
         componentInstance: T
@@ -23,7 +50,38 @@ createComponent // create instance of component, return <ComponentFixture>
         whenRenderingDone(): Promise<any>
         destroy(): void
 
+> __fixture.detectChanges()__ *angular change detection*
 
+> __fixture.autoDetectChanges()__ *angular auto detect changes*
+
+    providers: [
+      { provide: ComponentFixtureAutoDetect, useValue: true }
+    ]
+
+> __fixture.debugElement.injector.get(ComponentService)__ *get injected services in component*
+
+> __TestBed.get(RootInjectorService)__ *get Root injector!*
+
+> __inject__ *inject function has two parameters: An array of Angular dependency injection tokens. A test function whose parameters correspond exactly to each item in the injection token array. Do not configure the TestBed after calling inject.*
+
+> __async(() => fixture.whenStable().then() )__ *wait for async, wait for the promises to resolve in the next turn of the JavaScript engine*
+
+> __fakeAsync(() => tick() )__ *wait for async, ... in a lineal way*
+
+> __DebugElement.triggerEventHandler('click', payload)__ *can raise any data-bound event by its event name*
+
+
+the inject function
+
+
+
+# Jasmine
+### Spies
+toHaveBeenCalled matcher will return true if the spy was called.
+
+toHaveBeenCalledTimes matcher will pass if the spy was called the specified number of times.
+
+toHaveBeenCalledWith matcher will return true if the argument list matches any of the recorded calls to the spy.
 
 # Protractor
 ### Control browser

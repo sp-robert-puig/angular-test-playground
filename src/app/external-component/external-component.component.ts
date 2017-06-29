@@ -6,9 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./external-component.component.css']
 })
 export class ExternalComponent implements OnInit {
-  title = 'external component!'
+  title = 'external component!';
   constructor() { }
-  //test
+  // test
   ngOnInit() {
 
   }

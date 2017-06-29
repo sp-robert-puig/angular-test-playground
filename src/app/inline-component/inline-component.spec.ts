@@ -9,14 +9,12 @@ describe('Inline Component', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             declarations: [InlineComponent]
-        }).compileComponents();
-    })
-
-    beforeEach(() => {
+        });
         fixture = TestBed.createComponent(InlineComponent);
         comp = fixture.componentInstance;
         debugEl = fixture.debugElement;
     })
+
     it('has to load component', () => {
         expect(debugEl.componentInstance).toBeTruthy()
     })
@@ -24,8 +22,7 @@ describe('Inline Component', () => {
         fixture.detectChanges();
         expect(comp.title).toEqual('hello inline comp!', 'has comp.title');
         expect(debugEl.nativeElement.querySelector('h1').textContent).toContain('hello inline comp!');
-        expect(comp).toEqual(debugEl.componentInstance)
-        debugger;
+        expect(comp).toEqual(debugEl.componentInstance);
     }))
 })
 

@@ -1,22 +1,29 @@
 # Angular test
 
+Examples
+* https://embed.plnkr.co/?show=preview
+
+
 Test types
 * Isolated:
   * No rendering
-  * Same as JS
+  * Same as JS, smaller and easier to read, write, and maintain
   * Mock all deps
   * Isolated unit tests in pipes and services.
   * Test drive your components and test complex logic
+  * instances directly with new
+  * Substitute test doubles (stubs, spys, and mocks) for the real dependencies
 
 * Shallow:
   * Isolated test plus (ng-for, ng-if...)
   * Render template without childrens
   * Test requires to render a component’s template
+  * Shallow component tests with NO_ERRORS_SCHEMA greatly simplify unit testing of complex templates. However, the compiler no longer alerts you to mistakes such as misspelled or misused components and directives.
   * mocked up every single dependency of a component
   * schemas: [NO_ERRORS_SCHEMA]
   * declarations: [CurrentComponent]
 
-* Integration
+* Integration / Deep
   * Render Components
   * Check correctness
   * Only mock browser capabilities
@@ -24,9 +31,25 @@ Test types
   * imports: [Modules]
   * TestBed.get(Router);
 
-* Host
+* Host (childs)
   * Test a component inside a test host component
-  * 
+  * Declares both the DashboardHeroComponent and the TestHostComponent
+  * Creates the TestHostComponent instead of the DashboardHeroComponent
+
+        beforeEach( async(() => {
+          TestBed.configureTestingModule({
+            declarations: [ DashboardHeroComponent, TestHostComponent ], // declare both
+          }).compileComponents();
+        }));
+
+        beforeEach(() => {
+          // create TestHostComponent instead of DashboardHeroComponent
+          fixture  = TestBed.createComponent(TestHostComponent);
+          testHost = fixture.componentInstance;
+          heroEl   = fixture.debugElement.query(By.css('.hero')); // find hero
+          fixture.detectChanges(); // trigger initial data binding
+        });
+
 
 
 ## TestBed
@@ -54,9 +77,9 @@ Test types
 
 > __fixture.autoDetectChanges()__ *angular auto detect changes*
 
-    providers: [
-      { provide: ComponentFixtureAutoDetect, useValue: true }
-    ]
+        providers: [
+          { provide: ComponentFixtureAutoDetect, useValue: true }
+        ]
 
 > __fixture.debugElement.injector.get(ComponentService)__ *get injected services in component*
 
@@ -64,14 +87,94 @@ Test types
 
 > __inject__ *inject function has two parameters: An array of Angular dependency injection tokens. A test function whose parameters correspond exactly to each item in the injection token array. Do not configure the TestBed after calling inject.*
 
-> __async(() => fixture.whenStable().then() )__ *wait for async, wait for the promises to resolve in the next turn of the JavaScript engine*
+> __async(() => fixture.whenStable().then() )__ *wait for async, wait for the promises to resolve in the next turn of the JavaScript engine. Promise resolves when all pending asynchronous activities within this test complete*
 
 > __fakeAsync(() => tick() )__ *wait for async, ... in a lineal way*
 
+> __done()__ *jasmine async way*
+        
+        it('#getTimeoutValue should return timeout value',  (done: DoneFn) => {
+          service = new FancyService();
+          service.getTimeoutValue().then(value => {
+            expect(value).toBe('timeout value');
+            done();
+          });
+        });
+
 > __DebugElement.triggerEventHandler('click', payload)__ *can raise any data-bound event by its event name*
 
+        // Click Helper
+        /** Button events to pass to `DebugElement.triggerEventHandler` for RouterLink event handler */
+        export const ButtonClickEvents = {
+          left:  { button: 0 },
+          right: { button: 2 }
+        };
 
-the inject function
+        /** Simulate element click. Defaults to mouse left-button click event. */
+        export function click(el: DebugElement | HTMLElement, eventObj: any = ButtonClickEvents.left): void {
+          if (el instanceof HTMLElement) {
+            el.click();
+          } else {
+            el.triggerEventHandler('click', eventObj);
+          }
+        }
+
+> __TestBed.overrideComponent()__ *can replace the component's providers with easy-to-manage test doubles*
+
+        beforeEach( async(() => {
+          TestBed.configureTestingModule({
+            imports:   [ HeroModule ],
+            providers: [
+              { provide: ActivatedRoute, useValue: activatedRoute },
+              { provide: Router,         useClass: RouterStub},
+            ]
+          })
+          // Override component's own provider
+          .overrideComponent(HeroDetailComponent, {
+            set: {
+              providers: [
+                { provide: HeroDetailService, useClass: HeroDetailServiceSpy }
+              ]
+            }
+          })
+          .compileComponents();
+
+
+### Test a dependency | Spy vs Fake service
+* providers:    [ {provide: UserService, useValue: userServiceStub } ]
+* userService = TestBed.get(UserService);
+* Faking a service instance and spying on the real service are both great options.
+* You can stub and spy at the same time.
+* spy = spyOn(UserService, 'method').and.returnValue(Promise.resolve(mockMethod));
+* 
+
+### Test Router
+* care only if the component navigates with the right address under the given conditions
+* mock ActivatedRoute params and snapshot.params
+
+### Page Class
+* Page class that simplifies access to component properties and encapsulates the logic that sets them.
+* important hooks for component manipulation and inspection are neatly organized and accessible from an instance of Page.
+
+        class Page {
+          gotoSpy:      jasmine.Spy;
+          saveBtn:      DebugElement;
+          constructor() {
+            const router = TestBed.get(Router); // get router from root injector
+            this.gotoSpy = spyOn(comp, 'gotoList').and.callThrough();
+            this.navSpy  = spyOn(router, 'navigate');
+          }
+          methods...
+        }
+        fixture = TestBed.createComponent(HeroDetailComponent);
+        comp    = fixture.componentInstance;
+        page    = new Page();
+
+### Complex Components
+* complex components often depend on other components, directives, pipes, and providers and these must be added to the testing module too.
+* Create a SharedModule with commpon directives, pipes, providers (imports:[ SharedModule ])
+* Or even better, import parent module that includes Shared Module, and just need to pass mocked providers
+
 
 
 

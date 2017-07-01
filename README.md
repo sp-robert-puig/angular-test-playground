@@ -1,9 +1,5 @@
 # Angular test
 
-Examples
-* https://embed.plnkr.co/?show=preview
-
-
 Test types
 * Isolated:
   * No rendering

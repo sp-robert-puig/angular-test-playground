@@ -1,5 +1,9 @@
 # Angular test
 
+Examples
+* https://embed.plnkr.co/?show=preview
+
+
 Test types
 * Isolated:
   * No rendering
@@ -19,7 +23,7 @@ Test types
   * schemas: [NO_ERRORS_SCHEMA]
   * declarations: [CurrentComponent]
 
-* Integration
+* Integration / Deep
   * Render Components
   * Check correctness
   * Only mock browser capabilities
@@ -27,7 +31,7 @@ Test types
   * imports: [Modules]
   * TestBed.get(Router);
 
-* Host
+* Host (childs)
   * Test a component inside a test host component
   * Declares both the DashboardHeroComponent and the TestHostComponent
   * Creates the TestHostComponent instead of the DashboardHeroComponent

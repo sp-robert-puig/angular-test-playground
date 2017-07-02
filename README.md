@@ -1,31 +1,73 @@
-# Angular test
+[Types](#types) - [Methodolgies](#methodolgies) - [Angular Test Methods](#angular) - [Angular Test](#angular) - [Jasmine](#jasmine) - [Protractor](#protractor)
 
-Test types
+# <a name="types"></a>Test Types
+Unit tests
+* Focuses on a single “unit of code” – usually a function in an object or module.
+* Test should be simple, quick to write, and quick to run, and isolate failures.
+* Isolated from dependencies
+* Functional tests of methods or functions. ex. get X input expect X output
+* Giving X state should perform like X
+
+Integration tests
+* Verify the communication and the data flow between the modules are working properly or not
+* Multiple pieces are tested together
+* Help with wiring bugs, environment bugs
+* Failures are harder to diagnose and the tests are harder to maintain
+
+E2E tests / Acceptance Tests
+* End to end tests can be written quickly without any knowledge of the codebase.
+* Verify that a system meets external requirements and achieves its goals
+* You shouldn’t try to make very fine grained functional tests, just testing common user interactions.
+* Can easily become a nightmare to maintain.
+
+
+Google often suggests a 70/20/10 split: 70% unit tests, 20% integration tests, and 10% end-to-end tests. The exact mix will be different for each team, but in general, it should retain that pyramid shape.
+
+![test pyramid + UI](https://image.slidesharecdn.com/unitvsintegrationtests-150619070518-lva1-app6892/95/unit-vs-integration-tests-15-638.jpg?cb=1434697676)
+![isolated vs integrated](https://image.slidesharecdn.com/unitvsintegrationtests-150619070518-lva1-app6892/95/unit-vs-integration-tests-5-638.jpg?cb=1434697676)
+
+[Types](#types) - [Methodolgies](#methodolgies) - [Angular Test Methods](#angular) - [Angular Test](#angular) - [Jasmine](#jasmine) - [Protractor](#protractor)
+# <a name="methodolgies"></a>Tests methodologies
+TDD
+* Start by writing a test
+* Run the test and any other tests. At this point, your newly added test should fail. If it doesn’t fail here, it might not be testing the right thing and thus has a bug in it.
+* Write the minimum amount of code required to make the test pass
+* Run the tests to check the new test passes
+* Optionally refactor your code
+* Repeat from 1
+
+BDD
+* Set of best practices for writing great tests
+* BDD can, and should be, used together with TDD and unit testing methods
+* You should not test implementation, but instead behavior. 
+* Instead of thinking of how the code is implemented, we spend a moment thinking of what the scenario is.
+
+[Types](#types) - [Methodolgies](#methodolgies) - [Angular Test Methods](#angular) - [Angular Test](#angular) - [Jasmine](#jasmine) - [Protractor](#protractor)
+# <a name="angular-tests"></a>Angular Test Methods
 * Isolated:
-  * No rendering
+  * No template, class only
   * Same as JS, smaller and easier to read, write, and maintain
   * Mock all deps
-  * Isolated unit tests in pipes and services.
+  * Best for pipes and services, but appropriate for components and directives too
   * Test drive your components and test complex logic
   * instances directly with new
   * Substitute test doubles (stubs, spys, and mocks) for the real dependencies
 
-* Shallow:
-  * Isolated test plus (ng-for, ng-if...)
-  * Render template without childrens
-  * Test requires to render a component’s template
-  * Shallow component tests with NO_ERRORS_SCHEMA greatly simplify unit testing of complex templates. However, the compiler no longer alerts you to mistakes such as misspelled or misused components and directives.
-  * mocked up every single dependency of a component
-  * schemas: [NO_ERRORS_SCHEMA]
-  * declarations: [CurrentComponent]
+* Integrated Shallow:
+  * Test component class and template only. (ng-for, ng-if...)
+  * Render template without childrens. Mock or ignore related components and directives
+  * Greatly simplify unit testing of complex templates. However, the compiler no longer alerts you to mistakes such as misspelled or misused components and directives.
+  * Mock every single dependency of a component
+  * schemas: [NO_ERRORS_SCHEMA] declarations: [CurrentComponent] | or | Fake all referenced components
 
-* Integration / Deep
-  * Render Components
-  * Check correctness
+* Integrated Deep
+  * Test a component and all of its nested components, directives
+  * Gives a better idea of how your app will actually run
+  * Can be big and complicated and therefore break easily
+  * Integration tests are only used to check the correctness.
   * Only mock browser capabilities
   * Verify that a group of components and services (e.g., the router) work together
   * imports: [Modules]
-  * TestBed.get(Router);
 
 * Host (childs)
   * Test a component inside a test host component
@@ -46,9 +88,10 @@ Test types
           fixture.detectChanges(); // trigger initial data binding
         });
 
+[How to ...](https://vsavkin.com/three-ways-to-test-angular-2-components-dcea8e90bd8d)
 
-
-## TestBed
+[Types](#types) - [Methodolgies](#methodolgies) - [Angular Test Methods](#angular) - [Angular Test](#angular) - [Jasmine](#jasmine) - [Protractor](#protractor)
+# <a name="angular"></a>Angular Tests
 
 > __configureTestingModule__ *config ngModule declarations*
 
@@ -89,7 +132,7 @@ Test types
 
 > __done()__ *jasmine async way*
         
-        it('#getTimeoutValue should return timeout value',  (done: DoneFn) => {
+        it('getTimeoutValue should return timeout value',  (done: DoneFn) => {
           service = new FancyService();
           service.getTimeoutValue().then(value => {
             expect(value).toBe('timeout value');
@@ -171,162 +214,137 @@ Test types
 * Create a SharedModule with commpon directives, pipes, providers (imports:[ SharedModule ])
 * Or even better, import parent module that includes Shared Module, and just need to pass mocked providers
 
+[Types](#types) - [Methodolgies](#methodolgies) - [Angular Test Methods](#angular) - [Angular Test](#angular) - [Jasmine](#jasmine) - [Protractor](#protractor)
+# <a name="jasmine"></a>Jasmine
+### Jasmine Matchers
+> __to(N­ot)­Be( null | true | false )__
 
+> __to(N­ot)­Equ­al( value )__
 
+> __to(N­ot)­Mat­ch( regex | string )__
 
-# Jasmine
+> __toBe­Def­ine­d()__
+
+> __toBe­Und­efi­ned()__
+
+> __toBe­Nul­l()__
+
+> __toBe­Tru­thy()__
+
+> __toBe­Fal­sy()__
+
+> __to(N­ot)­Con­tain( string )__
+
+> __toBe­Les­sTh­an( number )__
+
+> __toBe­Gre­ate­rTh­an( number )__
+
+> __toBe­NaN()__
+
+> __toBe­Clo­seTo( number, precision )__
+
+> __toTh­row()__
+
 ### Spies
-toHaveBeenCalled matcher will return true if the spy was called.
+> __toHaveBeenCalled()__ *matcher will return true if the spy was called.*
 
-toHaveBeenCalledTimes matcher will pass if the spy was called the specified number of times.
+> __toHaveBeenCalledTimes()__ *matcher will pass if the spy was called the specified number of times.*
 
-toHaveBeenCalledWith matcher will return true if the argument list matches any of the recorded calls to the spy.
+> __toHaveBeenCalledWith()__ *matcher will return true if the argument list matches any of the recorded calls to the spy.*
 
-# Protractor
+[Types](#types) - [Methodolgies](#methodolgies) - [Angular Test Methods](#angular) - [Angular Test](#angular) - [Jasmine](#jasmine) - [Protractor](#protractor)
+# <a name="protractor"></a>Protractor
 ### Control browser
-browser.get('yoururl'); // Load address, can also use '#yourpage'
+> __browser.get('yoururl')__ *Load address, can also use '#yourpage'*
 
-browser.navigate().back();
+> __browser.navigate().back()__
 
-browser.navigate().forward();
+> __browser.navigate().forward()__
 
-browser.sleep(10000); // if your test is outrunning the browser
+> __browser.sleep(10000)__ *if your test is outrunning the browser*
 
-browser.waitForAngular(); // if your test is outrunning the browser
+> __browser.waitForAngular()__ *if your test is outrunning the browser*
 
-browser.getLocationAbsUrl() // get the current address
+> __browser.getLocationAbsUrl()__ *get the current address*
 
-browser.ignoreSynchronization = true; // If true, Protractor will not attempt to synchronize with the page before performing actions
-
-   
-Here's a trick how to wait for something to become present/visible:
-
-browser.wait(function() {
+> __browser.ignoreSynchronization = true__ *If true, Protractor will not attempt to synchronize with the page before performing actions*
+ 
+> __browser.wait(function() {
    return element(by.id('create')).isPresent();
-}, 5000);
-   
-element(by.id('create')).click();
+}, 5000)
+element(by.id('create')).click()__ *Here's a trick how to wait for something to become present/visible*
 
 ### Check visibility
+> __element(by.id('create')).isPresent()__ *Be careful with this: element is often present while it's not displayed...*
 
-element(by.id('create')).isPresent() // Be careful with this: element is often present while it's not displayed...
+> __element(by.id('create')).isEnabled()__ *Enabled/disabled, as in ng-disabled...*
 
-element(by.id('create')).isEnabled() //Enabled/disabled, as in ng-disabled...
-
-element(by.id('create')).isDisplayed() //Is element currently visible/displayed?
+> __element(by.id('create')).isDisplayed()__ *Is element currently visible/displayed?*
 
 ### Find an element by id, model, binding, ...
+> __element(by.id('user_name'))__
 
-element(by.id('user_name'))
+> __element(by.css('#myItem'))__
 
-element(by.css('#myItem'))
+> __element(by.model('person.name'))__ *refers to ng-model directive*
 
-element(by.model('person.name')) // refers to ng-model directive
+> __element(by.binding('person.concatName'))__ *refers to ng-bind directive*
 
-element(by.binding('person.concatName')); // refers to ng-bind directive
+> __element(by.textarea('person.extraDetails'))__
 
-element(by.textarea('person.extraDetails'));
+> __element (by.input( 'username' ))__
 
-element (by.input( 'username' ));
+> __element (by.input( 'username' )).clear()__
 
-element (by.input( 'username' )).clear();
+> __element(by.buttonText('Save'))__
 
-element(by.buttonText('Save'));
+> __element(by.partialButtonText('Save'))__
 
-element(by.partialButtonText('Save'));
+> __element(by.linkText('Save'))__
 
-element(by.linkText('Save'));
+> __element(by.partialLinkText('Save'))__
 
-element(by.partialLinkText('Save'));
+> __element(by.css('[ng-click="cancel()"]'))__
 
-element(by.css('[ng-click="cancel()"]')); 
+> __var dog = element(by.cssContainingText('.pet', 'Dog'))__
 
-var dog = element(by.cssContainingText('.pet', 'Dog'));
-
-var allOptions = element.all(by.options('c c in colors')); //When ng-options is used with selectbox
+> __var allOptions = element.all(by.options('c c in colors'))__ *When ng-options is used with selectbox*
 
 ### Find collection of elements by css, repeater, xpath..
+> __var list = element.all(by.css('.items))__
 
-var list = element.all(by.css('.items));
+> __var list2 = element.all(by.repeater('personhome.results'))__
 
-var list2 = element.all(by.repeater('personhome.results'));
+> __var list3 = element.all(by.xpath('//div__
 
-var list3 = element.all(by.xpath('//div
+> __expect(list.count()).toBe(3)__
 
-expect(list.count()).toBe(3);
+> __expect(list.get(0).getText()).toBe('First’)__
 
-expect(list.get(0).getText()).toBe('First’)
+> __expect(list.get(1).getText()).toBe('Second’)__
 
-expect(list.get(1).getText()).toBe('Second’)
+> __expect(list.first().getText()).toBe('First’)__
 
-expect(list.first().getText()).toBe('First’)
-
-expect(list.last().getText()).toBe('Last’)
+> __expect(list.last().getText()).toBe('Last’)__
 
 ### Send keystrokes, clear
+> __element(by.id('user_name').sendKeys("user1")__
 
-element(by.id('user_name').sendKeys("user1");
+> __sendKeys(protractor.Key.ENTER)__
 
-sendKeys(protractor.Key.ENTER);
+> __sendKeys(protractor.Key.TAB)__
 
-sendKeys(protractor.Key.TAB);
-
-element(by.id('user_name')).clear()
+> __element(by.id('user_name')).clear()__
 
 ### Position and size, also how to deal with promises:
-
-element(by.id('item1')).getLocation().then(function(location) {
+> __element(by.id('item1')).getLocation().then(function(location) {
   var x = location.x;
   var y = location.y;
-});
+})__
 
-element(by.id('item1')).getSize().then(function(size) {
+> __element(by.id('item1')).getSize().then(function(size) {
   var width = size.width;
   var height = size.height;
-});
+})__
 
-### Jasmine Matchers
-
-to(N­ot)­Be( null | true | false )
-to(N­ot)­Equ­al( value )
-to(N­ot)­Mat­ch( regex | string )
-toBe­Def­ine­d()
-toBe­Und­efi­ned()
-toBe­Nul­l()
-toBe­Tru­thy()
-toBe­Fal­sy()
-to(N­ot)­Con­tain( string )
-toBe­Les­sTh­an( number )
-toBe­Gre­ate­rTh­an( number )
-toBe­NaN()
-toBe­Clo­seTo( number, precision )
-toTh­row()
-
-# AngularTestPlayground
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.1.3.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+[Types](#types) - [Methodolgies](#methodolgies) - [Angular Test Methods](#angular) - [Angular Test](#angular) - [Jasmine](#jasmine) - [Protractor](#protractor)
